@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
-import Player from "./player";
+import createPlayer from "./player";
 import Background from "./background";
 import Controls from "./controls";
-import Enemy from "./enemy";
+import createEnemy from "./enemy";
 
 export default class Game {
   preload() {
@@ -12,49 +12,66 @@ export default class Game {
   setup() {
     createCanvas(windowWidth, windowHeight);
 
+
     this.background = new Background();
     this.controls = new Controls();
-    this.player = new Player();
+    this.player = createPlayer();
     this.enemies = new Group();
 
-    // this.background.startMoving();
-    this.playerEnemyCollision = this.playerEnemyCollision.bind(this);
+    this.background.startMoving();
+    this.player.walk();
+    this.handleEnemyCollision = this.handleEnemyCollision.bind(this);
     this.addEnemy();
   }
 
   draw() {
-    clear();
     background("black");
-    if (frameCount % 1000 === 0) {
-      this.addEnemy();
-    }
-    this.player.sprite.overlap(this.enemies, this.playerEnemyCollision);
+    // if (frameCount % 1000 === 0) {
+    // this.addEnemy();
+    // }
+    this.player.overlap(this.enemies, this.handleEnemyCollision);
 
     drawSprites();
   }
   addEnemy() {
-    const enemy = new Enemy();
+    const enemy = createEnemy();
     enemy.run();
-    enemy.addTo(this.enemies);
+    this.enemies.add(enemy);
   }
 
-  playerEnemyCollision(playerSprite, enemy) {
-    console.log("collision between enemy and player!");
+  handleEnemyCollision(player, enemy) {
+    if (player.isAttacking()) {
+      if (!enemy.isDying()) {
+        enemy.die();
+        this.enemies.remove(enemy);
+      }
+    } else {
+      this.gameOver = true;
+      player.die();
+      enemy.idle();
+      this.background.stopMoving();
+    }
   }
+
+
 
   // .FILL OUT ANY OF THESE FUNCTIONS BELOW
-  mouseMoved() {}
-  mouseDragged() {}
+  mouseMoved() { }
+  mouseDragged() { }
   mousePressed() {
+    if (this.gameOver) {
+      return;
+    }
+
     this.player.attack();
   }
-  mouseReleased() {}
-  mouseClicked() {}
-  doubleClicked() {}
-  mouseWheel() {}
-  keyPressed() {}
-  keyReleased() {}
-  keyTyped() {}
+  mouseReleased() { }
+  mouseClicked() { }
+  doubleClicked() { }
+  mouseWheel() { }
+  keyPressed() { }
+  keyReleased() { }
+  keyTyped() { }
   windowResized() {
     resizeCanvas(windowWidth, windowHeight);
   }

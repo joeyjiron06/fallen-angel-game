@@ -1,64 +1,72 @@
 /* eslint-disable no-undef */
 
-export default class Player {
-  constructor() {
-    this.sprite = createSprite(100, windowHeight - 188);
-    this.sprite.scale = 0.25;
-    this.sprite.debug = true;
-    this.sprite.setCollider('rectangle', 0, 0, 440,400);
-    this.sprite.addAnimation(
-      "idle",
-      "img/angel/girl/Idle/Fallen_Angels_Idle_000.png",
-      "img/angel/girl/Idle/Fallen_Angels_Idle_017.png"
-    );
-    this.sprite.addAnimation(
-      "slashing",
-      "img/angel/girl/Slashing/Fallen_Angels_Slashing_000.png",
-      "img/angel/girl/Slashing/Fallen_Angels_Slashing_011.png"
-    );
-    this.sprite.addAnimation(
-      "walking",
-      "img/angel/girl/Walking/Fallen_Angels_Walking_000.png",
-      "img/angel/girl/Walking/Fallen_Angels_Walking_023.png"
-    );
-    const drawSprite = this.sprite.draw;
-    this.sprite.draw = () => {
-      this.update();
-      drawSprite();
-    };
-  }
+export default () => {
+  const player = createSprite(100, windowHeight - 188);
+  const drawSprite = player.draw;
+  player.scale = 0.25;
+  player.debug = true;
+  player.setCollider('rectangle', 0, 0, 400, 600);
+  player.addAnimation(
+    "idle",
+    "img/angel/girl/Idle/Fallen_Angels_Idle_000.png",
+    "img/angel/girl/Idle/Fallen_Angels_Idle_017.png"
+  );
+  player.addAnimation(
+    "slashing",
+    "img/angel/girl/Slashing/Fallen_Angels_Slashing_000.png",
+    "img/angel/girl/Slashing/Fallen_Angels_Slashing_011.png"
+  );
+  player.addAnimation(
+    "walking",
+    "img/angel/girl/Walking/Fallen_Angels_Walking_000.png",
+    "img/angel/girl/Walking/Fallen_Angels_Walking_023.png"
+  );
+  player.addAnimation(
+    "dying",
+    "img/angel/girl/Dying/Fallen_Angels_Dying_000.png",
+    "img/angel/girl/Dying/Fallen_Angels_Dying_014.png"
+  );
 
-  isAnimationDone(animationLabel) {
-    return (
-      this.sprite.getAnimationLabel() === animationLabel &&
-      this.sprite.animation.getLastFrame() === this.sprite.animation.getFrame()
-    );
-  }
-
-  update() {
-    if (this.isAnimationDone("slashing")) {
-      this.walk();
+  player.draw = () => {
+    if (player.isAnimationDone("slashing")) {
+      player.walk();
     }
+    drawSprite();
+  };
+
+  player.isAnimationDone = (animationLabel) => {
+    return (
+      player.getAnimationLabel() === animationLabel &&
+      player.animation.getLastFrame() === player.animation.getFrame()
+    );
   }
 
-  walk() {
-    this.animate("walking");
+  player.walk = () => {
+    player.animate("walking");
+    player.setCollider('rectangle', 0, 0, 400, 600);
   }
 
-  attack() {
-    this.animate("slashing");
+  player.attack = () => {
+    player.animate("slashing");
+    player.setCollider('rectangle', 0, 0, 740, 600);
   }
 
-  isAttacking() {
-    return this.sprite.getAnimationLabel() === "slashing";
+  player.isAttacking = () => {
+    return player.getAnimationLabel() === "slashing";
   }
 
-  animate(label) {
-    if (this.sprite.getAnimationLabel() === label) {
+  player.animate = (label) => {
+    if (player.getAnimationLabel() === label) {
       return;
     }
 
-    this.sprite.changeAnimation(label);
-    this.sprite.animation.changeFrame(0);
+    player.changeAnimation(label);
+    player.animation.changeFrame(0);
   }
+  player.die = () => {
+    player.animate("dying");
+    player.animation.looping = false;
+  }
+
+  return player;
 }

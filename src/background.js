@@ -23,4 +23,15 @@ export default class Background {
     this.layer6.setSpeed(-0.2);
     this.floor.setSpeed(-0.5);
   }
+
+  stopMoving() {
+    this.layer1.setSpeed(0);
+    this.layer2.setSpeed(0);
+    this.layer3.setSpeed(0);
+    this.layer3.setSpeed(0);
+    this.layer4.setSpeed(0);
+    this.layer5.setSpeed(0);
+    this.layer6.setSpeed(0);
+    this.floor.setSpeed(0);
+  }
 }

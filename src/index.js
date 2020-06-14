@@ -3,6 +3,6 @@
 // of p5 to make everything easier. Then we must import p45.play
 // so that it can extend p5.
 import "./styles.css";
-import "./setupGame";
+import './setup';
 import "p5";
-import "../lib/p5.play";
+import "./p5.play";
